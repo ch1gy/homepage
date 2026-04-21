@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      background: #0a0a12;
+      color: #e0e0f0;
+      font-family: 'Space Mono', 'Courier New', monospace;
+    }
+
+    /* ── GRID ──────────────────────────────── */
+    .grid-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,255,200,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridPan 60s linear infinite;
+    }
+    @keyframes gridPan { from{background-position:0 0} to{background-position:40px 40px} }
+
+    .scanlines {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px);
+    }
+
+    /* corners */
+    .corner { position: fixed; pointer-events: none; z-index: 2; width: 60px; height: 60px; }
+    .corner-tl { top:16px; left:16px; border-top:2px solid #00ffc8; border-left:2px solid #00ffc8; }
+    .corner-tr { top:16px; right:16px; border-top:2px solid #ff2d78; border-right:2px solid #ff2d78; }
+    .corner-bl { bottom:16px; left:16px; border-bottom:2px solid #ff2d78; border-left:2px solid #ff2d78; }
+    .corner-br { bottom:16px; right:16px; border-bottom:2px solid #00ffc8; border-right:2px solid #00ffc8; }
+
+    .deco-text {
+      position: fixed; pointer-events: none; z-index: 2;
+      font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(0,255,200,0.3);
+    }
+    .deco-tl { top:22px; left:82px; }
+    .deco-tr { top:22px; right:82px; text-align:right; }
+    .deco-bl { bottom:28px; left:82px; }
+    .deco-br { bottom:28px; right:82px; text-align:right; }
+
+    /* ── LAYOUT ────────────────────────────── */
+    #app {
+      position: relative; z-index: 10;
+      width: 100vw; height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    /* ── BOOT TAG ──────────────────────────── */
+    #boot-tag {
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: #00ffc8; margin-bottom: 16px;
+      min-height: 18px;
+      opacity: 0; animation: fadeIn 0.8s 0.1s forwards;
+    }
+    #boot-tag::before { content: '▶  '; }
+    #boot-cursor {
+      display: inline-block; width: 7px; height: 12px;
+      background: #00ffc8; margin-left: 2px; vertical-align: middle;
+      animation: blink 0.7s step-start infinite;
+    }
+
+    /* ── CLOCK ─────────────────────────────── */
+    #clock {
+      font-family: 'Unbounded', 'Arial Black', sans-serif;
+      font-size: clamp(72px, 11vw, 118px);
+      font-weight: 900; line-height: 1; letter-spacing: -2px;
+      color: #fff; position: relative;
+      display: flex; align-items: baseline; justify-content: center;
+      white-space: nowrap;
+      opacity: 0; animation: glitchIn 0.6s 0.2s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    #clock-colon { color: #ff2d78; animation: blink 1s step-start infinite; font-family: 'Space Mono', 'Courier New', monospace; font-size: clamp(60px, 9vw, 100px); margin: 0 4px; }
+    #clock-ampm {
+      font-size: clamp(14px,2vw,20px); font-weight: 700;
+      color: #00ffc8; margin-left: 10px; align-self: flex-start;
+      padding-top: 12px; letter-spacing: 0.1em;
+    }
+
+    /* glitch layers */
+    #clock-r, #clock-c {
+      position: absolute; left: 0; top: 0; width: 100%;
+      pointer-events: none; opacity: 0;
+      font-family: 'Unbounded', 'Arial Black', sans-serif;
+      font-size: clamp(72px, 11vw, 118px);
+      font-weight: 900; line-height: 1; letter-spacing: -2px;
+      white-space: nowrap; display: flex; align-items: baseline; justify-content: center;
+    }
+    #clock-r { color: #ff2d78; clip-path: polygon(0 0,100% 0,100% 38%,0 38%); animation: glitch1 6s 3s step-end infinite; }
+    #clock-c { color: #00ffc8; clip-path: polygon(0 62%,100% 62%,100% 100%,0 100%); animation: glitch2 6s 3.8s step-end infinite; }
+
+    @keyframes glitch1 {
+      0%,88%,100%{transform:none;opacity:0}
+      90%{transform:translate(-4px,0) skewX(-3deg);opacity:.75}
+      92%{transform:translate(3px,0);opacity:.55}
+      94%{transform:translate(-2px,0);opacity:.65}
+      96%{transform:none;opacity:0}
+    }
+    @keyframes glitch2 {
+      0%,88%,100%{transform:none;opacity:0}
+      89%{transform:translate(4px,0) skewX(2deg);opacity:.65}
+      91%{transform:translate(-3px,0);opacity:.45}
+      93%{transform:none;opacity:0}
+    }
+
+    /* ── DATE ──────────────────────────────── */
+    #date {
+      font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(224,224,240,0.45); text-align: center; margin-top: 8px;
+      opacity: 0; animation: fadeIn 0.8s 0.35s forwards;
+    }
+
+    /* ── GREETING ──────────────────────────── */
+    #greeting {
+      font-size: clamp(13px,1.5vw,16px); color: #00ffc8;
+      margin-top: 16px; margin-bottom: 36px;
+      letter-spacing: 0.12em; text-transform: uppercase; text-align: center;
+      opacity: 0; animation: fadeIn 0.8s 0.45s forwards;
+    }
+    #greeting::before { content: '// '; color: rgba(0,255,200,0.35); }
+
+    /* ── SEARCH ────────────────────────────── */
+    #search-wrap {
+      width: min(520px, 88vw); margin-bottom: 28px; position: relative;
+      opacity: 0; animation: slideUp 0.7s 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    #search {
+      width: 100%; padding: 14px 48px 14px 20px;
+      font-family: 'Space Mono', 'Courier New', monospace; font-size: 15px;
+      color: #e0e0f0; background: rgba(0,255,200,0.04);
+      border: 1.5px solid rgba(0,255,200,0.35); border-radius: 0; outline: none;
+      caret-color: #00ffc8; transition: border-color .2s, background .2s, box-shadow .2s;
+    }
+    #search::placeholder { color: rgba(224,224,240,0.3); }
+    #search:focus {
+      border-color: #00ffc8; background: rgba(0,255,200,0.07);
+      box-shadow: 0 0 0 1px #00ffc8, 0 0 20px rgba(0,255,200,0.15), inset 0 0 20px rgba(0,255,200,0.04);
+    }
+    #search-cursor {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      color: #00ffc8; animation: blink 1s step-start infinite;
+      font-size: 18px; line-height: 1; pointer-events: none;
+    }
+
+    /* ── SHORTCUTS ─────────────────────────── */
+    #shortcuts {
+      display: flex; gap: 0;
+      border: 1.5px solid rgba(255,45,120,0.4);
+      opacity: 0; animation: slideUp 0.7s 0.68s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .shortcut {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px;
+      font-family: 'Space Mono', 'Courier New', monospace;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+      color: rgba(224,224,240,0.75); text-decoration: none;
+      background: transparent;
+      border-right: 1.5px solid rgba(255,45,120,0.4);
+      position: relative; transition: color .15s; white-space: nowrap; overflow: hidden;
+    }
+    .shortcut:last-child { border-right: none; }
+    .shortcut::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,45,120,0.12), rgba(0,255,200,0.08));
+      opacity: 0; transition: opacity .2s;
+    }
+    .shortcut:hover { color: #fff; }
+    .shortcut:hover::before { opacity: 1; }
+    .shortcut .num { font-size: 10px; color: #ff2d78; margin-right: 2px; font-weight: 400; }
+
+    /* ── STATUS BAR ────────────────────────── */
+    #status-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 28px;
+      display: flex; align-items: center; padding: 0 80px;
+      background: rgba(10,10,18,0.95); border-top: 1px solid rgba(0,255,200,0.2);
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(0,255,200,0.4); gap: 30px; z-index: 50;
+    }
+    .status-item { display: flex; align-items: center; gap: 6px; }
+    .status-dot { width:5px; height:5px; border-radius:50%; background:#00ffc8; animation: pulse 2s ease-in-out infinite; }
+
+    /* ── TWEAKS PANEL ──────────────────────── */
+    #tweaks-panel {
+      position: fixed; bottom: 40px; left: 24px;
+      background: rgba(10,10,18,0.97);
+      border: 1.5px solid rgba(0,255,200,0.4);
+      padding: 18px 22px; min-width: 260px;
+      font-family: 'Space Mono', monospace; z-index: 200;
+      box-shadow: 0 0 40px rgba(0,255,200,0.1);
+      display: none;
+      max-height: 80vh; overflow-y: auto;
+    }
+    #tweaks-panel h3 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.25em; color:#00ffc8; margin-bottom:14px; }
+    .tweak-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:9px; }
+    .tweak-row label { font-size:11px; color:rgba(224,224,240,0.5); white-space:nowrap; }
+    .tweak-input {
+      font-family:'Space Mono','Courier New',monospace; font-size:11px; padding:5px 8px;
+      background:rgba(0,255,200,0.05); border:1px solid rgba(0,255,200,0.3);
+      color:#e0e0f0; width:140px;
+    }
+    .tweak-sep { border:none; border-top:1px solid rgba(255,45,120,0.2); margin:8px 0; }
+
+    /* ── CRT FLASH ─────────────────────────── */
+    #crt-flash { position:fixed; inset:0; z-index:999; pointer-events:none; opacity:0; }
+    #crt-flash.fire { animation: crtFlash 0.18s step-end forwards; }
+    @keyframes crtFlash {
+      0%  {opacity:0;background:transparent}
+      8%  {opacity:1;background:rgba(255,45,120,.12);transform:translateY(-3px) skewX(-1deg)}
+      16% {opacity:1;background:rgba(0,255,200,.10);transform:translateY(3px) skewX(1deg)}
+      25% {opacity:.7;background:rgba(255,255,255,.06);transform:translateY(-1px)}
+      35% {opacity:1;background:rgba(255,45,120,.08);transform:translateY(2px)}
+      50% {opacity:.5;background:rgba(0,0,0,.15);transform:none}
+      80% {opacity:.3;background:transparent}
+      100%{opacity:0;background:transparent}
+    }
+    body.rgb-split { animation: rgbSplit 0.18s step-end forwards; }
+    @keyframes rgbSplit {
+      0%  {filter:none}
+      15% {filter:drop-shadow(3px 0 0 rgba(255,45,120,.6)) drop-shadow(-3px 0 0 rgba(0,255,200,.6))}
+      35% {filter:drop-shadow(-4px 0 0 rgba(255,45,120,.4)) drop-shadow(4px 0 0 rgba(0,255,200,.4))}
+      55% {filter:drop-shadow(2px 0 0 rgba(255,45,120,.3))}
+      100%{filter:none}
+    }
+    #tear-lines { position:fixed; inset:0; z-index:998; pointer-events:none; overflow:hidden; }
+    .tear { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(0,255,200,.5) 30%,rgba(255,45,120,.5) 60%,transparent); opacity:0; }
+    .tear.active { animation: tearSlide 0.12s step-end forwards; }
+    @keyframes tearSlide {
+      0%  {opacity:0;transform:translateX(0)}
+      20% {opacity:1;transform:translateX(-20px)}
+      40% {opacity:.7;transform:translateX(15px)}
+      60% {opacity:1;transform:translateX(-8px)}
+      80% {opacity:.4;transform:translateX(4px)}
+      100%{opacity:0;transform:translateX(0)}
+    }
+    #greeting.jitter { animation: greetJitter 0.15s step-end forwards; }
+    @keyframes greetJitter {
+      0%  {transform:none;color:#00ffc8}
+      25% {transform:translate(-5px,0) skewX(-3deg);color:#ff2d78}
+      50% {transform:translate(5px,1px);color:#fff}
+      75% {transform:translate(-2px,0);color:#00ffc8}
+      100%{transform:none;color:#00ffc8}
+    }
+
+    /* ── ANIMS ─────────────────────────────── */
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0.1} }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes glitchIn {
+      0%  {opacity:0;transform:skewX(-8deg) scale(.97)}
+      60% {opacity:1;transform:skewX(2deg)}
+      80% {transform:skewX(-1deg)}
+      100%{opacity:1;transform:none}
+    }
+    @keyframes bootGlitch {
+      0%  {opacity:1;transform:none}
+      20% {opacity:0;transform:translate(4px,0) skewX(-5deg)}
+      40% {opacity:1;transform:translate(-3px,0);color:#ff2d78}
+      60% {opacity:.5;transform:translate(2px,0)}
+      80% {opacity:1;transform:none;color:#00ffc8}
+      100%{opacity:1;transform:none}
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+<div class="deco-text deco-tl">SYS::INIT_OK</div>
+<div class="deco-text deco-tr">VER 2.0.0</div>
+<div class="deco-text deco-bl">MEM::NOMINAL</div>
+<div class="deco-text deco-br" id="deco-seconds">00:00:00</div>
+<div id="crt-flash"></div>
+<div id="tear-lines">
+  <div class="tear" id="tear-a"></div>
+  <div class="tear" id="tear-b"></div>
+  <div class="tear" id="tear-c"></div>
+</div>
+
+<div id="app">
+  <div id="boot-tag"><span id="boot-text"></span><span id="boot-cursor"></span></div>
+
+  <div id="clock">
+    <span id="clock-r"></span>
+    <span id="clock-c"></span>
+    <span id="clock-h"></span>
+    <span id="clock-colon">:</span>
+    <span id="clock-m"></span>
+    <span id="clock-ampm"></span>
+  </div>
+
+  <div id="date"></div>
+  <div id="greeting">good_day(friend)</div>
+
+  <div id="search-wrap">
+    <input id="search" type="search" placeholder="query_google //" autocomplete="off" autofocus />
+    <span id="search-cursor">█</span>
+  </div>
+
+  <div id="shortcuts"></div>
+</div>
+
+<div id="status-bar">
+  <span class="status-item"><span class="status-dot"></span>ONLINE</span>
+  <span class="status-item">TABS::SECURE</span>
+  <span class="status-item">FF::GECKO ENGINE</span>
+</div>
+
+<div id="tweaks-panel">
+  <h3>// tweaks</h3>
+  <div class="tweak-row"><label>name</label><input class="tweak-input" id="t-name" /></div>
+  <hr class="tweak-sep"/>
+  <div class="tweak-row"><label>link_1 label</label><input class="tweak-input" id="t-l1" /></div>
+  <div class="tweak-row"><label>link_1 url</label><input class="tweak-input" id="t-u1" /></div>
+  <hr class="tweak-sep"/>
+  <div class="tweak-row"><label>link_2 label</label><input class="tweak-input" id="t-l2" /></div>
+  <div class="tweak-row"><label>link_2 url</label><input class="tweak-input" id="t-u2" /></div>
+  <hr class="tweak-sep"/>
+  <div class="tweak-row"><label>link_3 label</label><input class="tweak-input" id="t-l3" /></div>
+  <div class="tweak-row"><label>link_3 url</label><input class="tweak-input" id="t-u3" /></div>
+  <hr class="tweak-sep"/>
+  <div class="tweak-row"><label>link_4 label</label><input class="tweak-input" id="t-l4" /></div>
+  <div class="tweak-row"><label>link_4 url</label><input class="tweak-input" id="t-u4" /></div>
+</div>
+
+<script>
+// ── DEFAULTS ──────────────────────────────────────────
+const DEFAULTS = {
+  name: 'friend',
+  l1: 'YouTube',  u1: 'https://youtube.com',
+  l2: 'GitHub',   u2: 'https://github.com',
+  l3: 'Mail',     u3: 'https://mail.google.com',
+  l4: 'Work',     u4: 'https://www.chigy.dev',
+};
+
+function loadCfg() {
+  try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('y2k_cfg') || '{}')); }
+  catch { return {...DEFAULTS}; }
+}
+function saveCfg(cfg) { localStorage.setItem('y2k_cfg', JSON.stringify(cfg)); }
+
+let cfg = loadCfg();
+
+// ── HELPERS ───────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ── ICON SVGs ─────────────────────────────────────────
+const ICONS = {
+  youtube: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.8 8s-.2-1.4-.8-2c-.7-.8-1.5-.8-1.9-.9C16.5 5 12 5 12 5s-4.5 0-7.1.2c-.4 0-1.2.1-1.9.9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.6c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.7.8 1.6.8 2 .9C7 19 12 19 12 19s4.5 0 7.1-.2c.4 0 1.2-.1 1.9-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.6c0-1.6-.2-3.2-.2-3.2z"/><path d="M10 15l5-3-5-3v6z"/></svg>`,
+  github:  `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`,
+  mail:    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`,
+  link:    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  code:    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+};
+
+function guessIcon(label, url) {
+  const s = (label + url).toLowerCase();
+  if (s.includes('youtube') || s.includes('yt')) return ICONS.youtube;
+  if (s.includes('github')) return ICONS.github;
+  if (s.includes('mail') || s.includes('outlook') || s.includes('gmail')) return ICONS.mail;
+  if (s.includes('code') || s.includes('dev') || s.includes('arch')) return ICONS.code;
+  return ICONS.link;
+}
+
+// ── RENDER SHORTCUTS ──────────────────────────────────
+function renderShortcuts() {
+  const wrap = $('shortcuts');
+  wrap.innerHTML = '';
+  [1,2,3,4].forEach(n => {
+    const label = cfg['l'+n], url = cfg['u'+n];
+    const a = document.createElement('a');
+    a.className = 'shortcut';
+    a.href = url;
+    a.innerHTML = `<span class="num">0${n}</span>${guessIcon(label, url)}<span>${label}</span>`;
+    wrap.appendChild(a);
+  });
+}
+
+// ── CLOCK ─────────────────────────────────────────────
+function updateClock() {
+  const d = new Date();
+  let h = d.getHours();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  const hStr = pad(h), mStr = pad(d.getMinutes());
+  const timeStr = hStr + ':' + mStr;
+
+  $('clock-h').textContent = hStr;
+  $('clock-m').textContent = mStr;
+  $('clock-ampm').textContent = ampm;
+  $('clock-r').textContent = timeStr;
+  $('clock-c').textContent = timeStr;
+
+  // date
+  $('date').textContent =
+    `${DAYS[d.getDay()].toUpperCase()} ${MONTHS[d.getMonth()].toUpperCase()} ${d.getDate()} ${d.getFullYear()}`;
+
+  // greeting
+  const name = cfg.name || 'friend';
+  const day = d.getDay(), hour = d.getHours();
+  let gr;
+  if (day === 5 && hour >= 16) gr = `happy_friday(${name})`;
+  else if (hour < 5)  gr = `late_night_session(${name})`;
+  else if (hour < 12) gr = `good_morning(${name})`;
+  else if (hour < 18) gr = `good_afternoon(${name})`;
+  else                gr = `good_evening(${name})`;
+  $('greeting').textContent = gr;
+
+  // deco seconds
+  $('deco-seconds').textContent =
+    `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── SEARCH ────────────────────────────────────────────
+const searchEl = $('search');
+const cursorEl = $('search-cursor');
+searchEl.addEventListener('input', () => {
+  cursorEl.style.display = searchEl.value ? 'none' : '';
+});
+searchEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && searchEl.value.trim())
+    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(searchEl.value.trim())}`;
+});
+
+// ── BOOT MESSAGES ─────────────────────────────────────
+const BOOT_MSGS = [
+  'SYSTEM::READY','CAFFEINE::LOW','VIBE::NOMINAL','TODO::PENDING',
+  'BRAIN::BUFFERING','TABS::MULTIPLYING','FOCUS::LOST','SNACKS::DEPLETED',
+  'MOTIVATION::LOADING','SLEEP::OPTIONAL','COFFEE::REQUIRED','BUG::FEATURES',
+  'DISTRACTION::INCOMING','PRODUCTIVITY::404','CHAOS::MANAGED',
+  'DEADLINE::IMMINENT','PROCRASTINATION::ACTIVE','GALAXY_BRAIN::ENGAGED',
+  'MONDAY::DETECTED','FRIDAY::ACQUIRED',
+];
+let bootIdx = 0, bootPos = 0, bootPhase = 'typing';
+
+function bootTick() {
+  const msg = BOOT_MSGS[bootIdx];
+  const el = $('boot-text');
+  if (bootPhase === 'typing') {
+    if (bootPos < msg.length) {
+      bootPos++;
+      el.textContent = msg.slice(0, bootPos);
+      setTimeout(bootTick, 45);
+    } else {
+      bootPhase = 'holding';
+      setTimeout(bootTick, 2800);
+    }
+  } else if (bootPhase === 'holding') {
+    // glitch flash
+    const tag = $('boot-tag');
+    tag.style.animation = 'bootGlitch 0.12s step-end';
+    setTimeout(() => tag.style.animation = '', 130);
+    bootPhase = 'deleting';
+    setTimeout(bootTick, 200);
+  } else {
+    if (bootPos > 0) {
+      bootPos--;
+      el.textContent = msg.slice(0, bootPos);
+      setTimeout(bootTick, 25);
+    } else {
+      bootIdx = (bootIdx + 1) % BOOT_MSGS.length;
+      bootPhase = 'typing';
+      setTimeout(bootTick, 100);
+    }
+  }
+}
+bootTick();
+
+// ── CRT GLITCH ────────────────────────────────────────
+function fireGlitch() {
+  ['tear-a','tear-b','tear-c'].forEach(id => {
+    const t = $(id);
+    t.style.top = (10 + Math.random() * 80) + 'vh';
+    t.classList.remove('active');
+    void t.offsetWidth;
+    t.classList.add('active');
+    setTimeout(() => t.classList.remove('active'), 200);
+  });
+  const flash = $('crt-flash');
+  flash.classList.remove('fire'); void flash.offsetWidth; flash.classList.add('fire');
+  setTimeout(() => flash.classList.remove('fire'), 250);
+  document.body.classList.add('rgb-split');
+  setTimeout(() => document.body.classList.remove('rgb-split'), 250);
+  const gr = $('greeting');
+  gr.classList.add('jitter');
+  setTimeout(() => gr.classList.remove('jitter'), 200);
+  setTimeout(fireGlitch, 12000 + Math.random() * 22000);
+}
+setTimeout(fireGlitch, 12000 + Math.random() * 10000);
+
+// ── TWEAKS ────────────────────────────────────────────
+function syncTweakInputs() {
+  $('t-name').value = cfg.name;
+  [1,2,3,4].forEach(n => {
+    $('t-l'+n).value = cfg['l'+n];
+    $('t-u'+n).value = cfg['u'+n];
+  });
+}
+
+function onTweakChange() {
+  cfg.name = $('t-name').value;
+  [1,2,3,4].forEach(n => {
+    cfg['l'+n] = $('t-l'+n).value;
+    cfg['u'+n] = $('t-u'+n).value;
+  });
+  saveCfg(cfg);
+  renderShortcuts();
+  updateClock();
+}
+
+['t-name','t-l1','t-u1','t-l2','t-u2','t-l3','t-u3','t-l4','t-u4'].forEach(id => {
+  $(id).addEventListener('input', onTweakChange);
+});
+
+// host messaging for design tool tweaks toggle
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode')   $('tweaks-panel').style.display = 'block';
+  if (e.data?.type === '__deactivate_edit_mode') $('tweaks-panel').style.display = 'none';
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+// ── INIT ──────────────────────────────────────────────
+syncTweakInputs();
+renderShortcuts();
+</script>
+</body>
+</html>
