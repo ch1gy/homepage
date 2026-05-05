@@ -1,0 +1,49 @@
+@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes blink   { 0%,49%{opacity:1} 50%,100%{opacity:0.1} }
+
+.searchWrap {
+  width: min(520px, 88vw);
+  margin-bottom: 28px;
+  position: relative;
+  opacity: 0;
+  animation: slideUp 0.7s 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.search {
+  width: 100%;
+  padding: 14px 48px 14px 20px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--cyan-faint);
+  border: 1.5px solid rgba(0,255,200,0.35);
+  border-radius: 0;
+  outline: none;
+  caret-color: var(--cyan);
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.search::placeholder {
+  color: rgba(224,224,240,0.3);
+}
+
+.search:focus {
+  border-color: var(--cyan);
+  background: rgba(0,255,200,0.07);
+  box-shadow:
+    0 0 0 1px var(--cyan),
+    0 0 20px rgba(0,255,200,0.15),
+    inset 0 0 20px rgba(0,255,200,0.04);
+}
+
+.cursor {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cyan);
+  animation: blink 1s step-start infinite;
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: none;
+}

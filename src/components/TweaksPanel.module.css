@@ -1,0 +1,57 @@
+.panel {
+  position: fixed;
+  bottom: 40px;
+  left: 24px;
+  background: rgba(10, 10, 18, 0.97);
+  border: 1.5px solid rgba(0, 255, 200, 0.4);
+  padding: 18px 22px;
+  min-width: 260px;
+  font-family: var(--font-mono);
+  z-index: 200;
+  box-shadow: 0 0 40px rgba(0, 255, 200, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.panel h3 {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--cyan);
+  margin-bottom: 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.row label {
+  font-size: 11px;
+  color: rgba(224, 224, 240, 0.5);
+  white-space: nowrap;
+}
+
+.input {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 8px;
+  background: rgba(0, 255, 200, 0.05);
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  color: var(--text);
+  width: 140px;
+  outline: none;
+}
+.input:focus {
+  border-color: var(--cyan);
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid rgba(255, 45, 120, 0.2);
+  margin: 8px 0;
+}

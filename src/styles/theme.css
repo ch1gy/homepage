@@ -1,0 +1,12 @@
+:root {
+  --bg: #0a0a12;
+  --cyan: #00ffc8;
+  --pink: #ff2d78;
+  --text: #e0e0f0;
+  --text-dim: rgba(224,224,240,0.45);
+  --cyan-faint: rgba(0,255,200,0.04);
+  --cyan-border: rgba(0,255,200,0.28);
+  --pink-border: rgba(255,45,120,0.4);
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  --font-display: 'Unbounded', 'Arial Black', sans-serif;
+}

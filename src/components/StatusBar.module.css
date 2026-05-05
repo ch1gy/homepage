@@ -1,0 +1,34 @@
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.statusBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 80px;
+  background: rgba(10,10,18,0.95);
+  border-top: 1px solid rgba(0,255,200,0.2);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(0,255,200,0.4);
+  gap: 30px;
+  z-index: 50;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: pulse 2s ease-in-out infinite;
+}

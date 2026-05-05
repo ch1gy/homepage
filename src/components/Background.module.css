@@ -1,0 +1,157 @@
+@keyframes gridPan  { from{background-position:0 0} to{background-position:40px 40px} }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes crtFlash {
+  0%  {opacity:0;background:transparent}
+  8%  {opacity:1;background:rgba(255,45,120,.12);transform:translateY(-3px) skewX(-1deg)}
+  16% {opacity:1;background:rgba(0,255,200,.10);transform:translateY(3px) skewX(1deg)}
+  25% {opacity:.7;background:rgba(255,255,255,.06);transform:translateY(-1px)}
+  35% {opacity:1;background:rgba(255,45,120,.08);transform:translateY(2px)}
+  50% {opacity:.5;background:rgba(0,0,0,.15);transform:none}
+  80% {opacity:.3;background:transparent}
+  100%{opacity:0;background:transparent}
+}
+@keyframes tearSlide {
+  0%  {opacity:0;transform:translateX(0)}
+  20% {opacity:1;transform:translateX(-20px)}
+  40% {opacity:.7;transform:translateX(15px)}
+  60% {opacity:1;transform:translateX(-8px)}
+  80% {opacity:.4;transform:translateX(4px)}
+  100%{opacity:0;transform:translateX(0)}
+}
+
+.gridBg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,255,200,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridPan 60s linear infinite;
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.12) 3px,
+    rgba(0,0,0,0.12) 4px
+  );
+}
+
+.corner {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2;
+  width: 60px;
+  height: 60px;
+}
+
+.cornerTl {
+  top: 16px;
+  left: 16px;
+  border-top: 2px solid #00ffc8;
+  border-left: 2px solid #00ffc8;
+}
+
+.cornerTr {
+  top: 16px;
+  right: 16px;
+  border-top: 2px solid #ff2d78;
+  border-right: 2px solid #ff2d78;
+}
+
+.cornerBl {
+  bottom: 16px;
+  left: 16px;
+  border-bottom: 2px solid #ff2d78;
+  border-left: 2px solid #ff2d78;
+}
+
+.cornerBr {
+  bottom: 16px;
+  right: 16px;
+  border-bottom: 2px solid #00ffc8;
+  border-right: 2px solid #00ffc8;
+}
+
+.decoText {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(0,255,200,0.3);
+}
+
+.decoTl {
+  top: 22px;
+  left: 82px;
+}
+
+.decoTr {
+  top: 22px;
+  right: 82px;
+  text-align: right;
+}
+
+.decoBl {
+  bottom: 28px;
+  left: 82px;
+}
+
+.decoBr {
+  bottom: 28px;
+  right: 82px;
+  text-align: right;
+}
+
+.crtFlash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.crtFlash.fire {
+  animation: crtFlash 0.18s step-end forwards;
+}
+
+.tearLines {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tear {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0,255,200,0.5) 30%,
+    rgba(255,45,120,0.5) 60%,
+    transparent
+  );
+  opacity: 0;
+}
+
+.tear.active {
+  animation: tearSlide 0.12s step-end forwards;
+}
+
+.rgbSplit {
+  animation: rgbSplit 0.18s step-end forwards;
+}

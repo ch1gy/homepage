@@ -1,0 +1,101 @@
+/* Shared form primitives used across all tool components */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(0, 255, 200, 0.45);
+}
+
+.input {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 7px 9px;
+  background: rgba(0, 255, 200, 0.04);
+  border: 1px solid rgba(0, 255, 200, 0.28);
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.input:focus {
+  border-color: var(--cyan);
+}
+
+.select {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 7px 9px;
+  background: rgba(0, 255, 200, 0.04);
+  border: 1px solid rgba(0, 255, 200, 0.28);
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.select:focus {
+  border-color: var(--cyan);
+}
+.select option {
+  background: var(--bg);
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid rgba(255, 45, 120, 0.18);
+  margin: 4px 0;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(224, 224, 240, 0.7);
+  background: transparent;
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.btn:hover {
+  color: #fff;
+  background: rgba(0, 255, 200, 0.08);
+  border-color: var(--cyan);
+}
+
+.btnAccent {
+  color: var(--bg);
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+.btnAccent:hover {
+  background: #00e6b4;
+  box-shadow: 0 0 16px rgba(0, 255, 200, 0.35);
+}
+.btnAccent:disabled {
+  background: rgba(0, 255, 200, 0.2);
+  color: rgba(224, 224, 240, 0.3);
+  cursor: default;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.btnPink {
+  color: var(--pink);
+  border-color: rgba(255, 45, 120, 0.4);
+}
+.btnPink:hover {
+  background: rgba(255, 45, 120, 0.1);
+  border-color: var(--pink);
+  color: #fff;
+}
