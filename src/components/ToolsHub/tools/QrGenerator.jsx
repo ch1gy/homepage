@@ -12,8 +12,8 @@ export default function QrGenerator() {
   const [cornerColor, setCornerColor] = useState('#ff2d78');
   const [logo,        setLogo]        = useState(null);
 
-  const previewRef = useRef(null);
-  const qrRef      = useRef(null);
+  const qrContainerRef = useRef(null);
+  const qrRef          = useRef(null);
 
   function qrOpts() {
     return {
@@ -32,15 +32,15 @@ export default function QrGenerator() {
 
   useEffect(() => {
     if (!text.trim()) {
-      if (previewRef.current) previewRef.current.innerHTML = '';
+      if (qrContainerRef.current) qrContainerRef.current.innerHTML = '';
       qrRef.current = null;
       return;
     }
     if (!qrRef.current) {
       qrRef.current = new QRCodeStyling(qrOpts());
-      if (previewRef.current) {
-        previewRef.current.innerHTML = '';
-        qrRef.current.append(previewRef.current);
+      if (qrContainerRef.current) {
+        qrContainerRef.current.innerHTML = '';
+        qrRef.current.append(qrContainerRef.current);
       }
     } else {
       qrRef.current.update(qrOpts());
@@ -145,10 +145,11 @@ export default function QrGenerator() {
         </button>
       </div>
 
-      <div className={styles.preview} ref={previewRef}>
+      <div className={styles.preview}>
         {!hasText && (
           <span className={styles.placeholder}>ENTER_URL_TO_GENERATE</span>
         )}
+        <div ref={qrContainerRef} />
       </div>
     </div>
   );

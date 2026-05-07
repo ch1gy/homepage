@@ -5,13 +5,13 @@ import ColorPicker from './tools/ColorPicker.jsx';
 import styles from './ToolsHub.module.css';
 
 const TABS = [
-  { id: 'pwd',   label: 'PASSWORD' },
   { id: 'qr',    label: 'QR_CODE'  },
+  { id: 'pwd',   label: 'PASSWORD' },
   { id: 'color', label: 'COLOR'    },
 ];
 
 export default function ToolsHub({ open, onClose }) {
-  const [activeTab, setActiveTab] = useState('pwd');
+  const [activeTab, setActiveTab] = useState('qr');
 
   useEffect(() => {
     function onKey(e) {
